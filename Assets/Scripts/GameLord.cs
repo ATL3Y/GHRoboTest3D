@@ -48,6 +48,7 @@ public class GameLord : MonoBehaviour
     {
         instance = this;
 
+        textWait = 1.0f;
         opponentCount = 30;
 
         WinState = false;
@@ -82,7 +83,7 @@ public class GameLord : MonoBehaviour
         cam = Camera.main;
 
         // Set pos relative to player. 
-        cam.transform.position = player.transform.position + 10.0f * Vector3.forward;
+        cam.transform.position = player.transform.position - 10.0f * Vector3.forward;
         cam.transform.rotation *= Quaternion.LookRotation ( player.transform.position - cam.transform.position );
     }
 
