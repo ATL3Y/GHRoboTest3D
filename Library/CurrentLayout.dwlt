@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 8}
-  m_MinSize: {x: 950, y: 721}
+  m_MinSize: {x: 950, y: 742}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -70,7 +70,7 @@ MonoBehaviour:
   m_MinSize: {x: 234, y: 471}
   m_MaxSize: {x: 10004, y: 14021}
   vertical: 1
-  controlID: 4831
+  controlID: 58
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -116,10 +116,10 @@ MonoBehaviour:
     y: 0
     width: 1482
     height: 492
-  m_MinSize: {x: 436, y: 471}
+  m_MinSize: {x: 336, y: 471}
   m_MaxSize: {x: 14006, y: 14021}
   vertical: 0
-  controlID: 4763
+  controlID: 57
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -165,10 +165,10 @@ MonoBehaviour:
     y: 492
     width: 1482
     height: 455
-  m_MinSize: {x: 304, y: 200}
-  m_MaxSize: {x: 8004, y: 4021}
+  m_MinSize: {x: 306, y: 221}
+  m_MaxSize: {x: 8006, y: 4021}
   vertical: 0
-  controlID: 4697
+  controlID: 127
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -252,10 +252,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 711, y: 671}
+  m_MinSize: {x: 611, y: 692}
   m_MaxSize: {x: 18006, y: 18042}
   vertical: 1
-  controlID: 73
+  controlID: 54
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -276,10 +276,10 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 947
-  m_MinSize: {x: 711, y: 671}
+  m_MinSize: {x: 611, y: 692}
   m_MaxSize: {x: 18006, y: 18042}
   vertical: 0
-  controlID: 74
+  controlID: 55
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -300,10 +300,10 @@ MonoBehaviour:
     y: 0
     width: 1482
     height: 947
-  m_MinSize: {x: 436, y: 671}
+  m_MinSize: {x: 336, y: 692}
   m_MaxSize: {x: 14006, y: 18042}
   vertical: 1
-  controlID: 4762
+  controlID: 56
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -322,14 +322,14 @@ MonoBehaviour:
     y: 0
     width: 987
     height: 492
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 18}
+  m_MinSize: {x: 102, y: 121}
+  m_MaxSize: {x: 4002, y: 4021}
+  m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 18}
   - {fileID: 19}
-  m_Selected: 0
-  m_LastSelected: 1
+  m_Selected: 1
+  m_LastSelected: 0
 --- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -522,14 +522,14 @@ MonoBehaviour:
     - {fileID: 1107342475895104626, guid: c6ad64a4e32c5cc4297e5bf18e176029, type: 2}
     - {fileID: 1102390218054996684, guid: c6ad64a4e32c5cc4297e5bf18e176029, type: 2}
     m_ValueSerializationHelper:
-    - e00: 0.5363657
+    - e00: 1
       e01: 0
       e02: 0
-      e03: 58.417023
+      e03: 0
       e10: 0
-      e11: 0.5363657
+      e11: 1
       e12: 0
-      e13: 99.15529
+      e13: 0
       e20: 0
       e21: 0
       e22: 1
@@ -683,18 +683,18 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Prefabs
+    - Assets/Robo/Animation
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Prefabs
+  - Assets/Robo/Animation
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\atley\Documents\GHRoboTest3D
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 84270000
-    m_LastClickedID: 10116
+    m_SelectedIDs: 0c280000
+    m_LastClickedID: 10252
     m_ExpandedIDs: 000000006e270000762700002628000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -751,21 +751,21 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: b87c0000bc3f0000d4350000a43d0000dc83faff2a4b0000f6340000a296fdff6e41000066abf2ff466bf2ffec48000074430000a63d0000684100006a420000ac2dffff643e000064470000da800000ce800000d48000000c4c00008a540000a26100007461000040530000e45300003e540000f6290000e8290000d68affffae270000b4270000
+    m_ExpandedInstanceIDs: b87c0000bc3f0000d4350000a43d0000dc83faff2a4b0000f6340000a296fdff6e41000066abf2ff466bf2ffec48000074430000a63d0000684100006a420000ac2dffff643e000064470000da800000ce800000d48000000c4c00008a540000a26100007461000040530000e45300003e540000f6290000e8290000d68affffae27000088270000b4270000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Run
-      m_OriginalName: Run
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: -51590
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 0}
     m_CreateAssetUtility:
@@ -807,9 +807,9 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: c023fbff
-    m_LastClickedID: -318528
-    m_ExpandedIDs: 5224fbffc624fbff803ffbff1c47fbffd64ffbff6cf5ffffe2f7ffff9efbffff00000000
+    m_SelectedIDs: e401feff
+    m_LastClickedID: -130588
+    m_ExpandedIDs: ce4ffeff1e5cfeff827affff8cdfffffccf6ffff9efbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

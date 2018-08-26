@@ -117,8 +117,9 @@ public class GameLord : MonoBehaviour
         if ( WinState )
         {
             // Ending animation 
-
+            StopAllCoroutines ( ); // HACKL3Y: Why isn't this stopping the ReleaseOpponent call?
             SceneManager.LoadScene ( 0 );
+            
         }
         else
         {
