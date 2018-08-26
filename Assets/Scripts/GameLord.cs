@@ -83,7 +83,7 @@ public class GameLord : MonoBehaviour
         cam = Camera.main;
 
         // Set pos relative to player. 
-        cam.transform.position = player.transform.position - 10.0f * Vector3.forward;
+        cam.transform.position = player.transform.position - 20.0f * Vector3.forward;
         cam.transform.rotation *= Quaternion.LookRotation ( player.transform.position - cam.transform.position );
     }
 
@@ -107,19 +107,20 @@ public class GameLord : MonoBehaviour
 
         yield return StartCoroutine ( RoundPlaying ( ) );
 
-        if ( Ddebug )
-        {
-            Debug.Log ( "got here" );
-        }
-
         yield return StartCoroutine ( RoundEnding ( ) );
+
+        StopAllCoroutines ( ); // HACKL3Y: Why isn't this stopping the ReleaseOpponent call?
 
         if ( WinState )
         {
             // Ending animation 
-            StopAllCoroutines ( ); // HACKL3Y: Why isn't this stopping the ReleaseOpponent call?
-            SceneManager.LoadScene ( 0 );
+
+
             
+            SceneManager.LoadScene ( 0 );
+
+            // Fix Lighting
+
         }
         else
         {
@@ -141,7 +142,7 @@ public class GameLord : MonoBehaviour
 
         round++;
         // display round num text
-        print ( "Round " + round );
+        print ( "Starting round " + round );
 
         yield return textWait;
     }
@@ -167,7 +168,16 @@ public class GameLord : MonoBehaviour
         opponentLord.DisableOpponents ( );
 
         // Display round score
-        print ( "Player health " + Player.Hits + ", you won = " + WinState );
+        if ( !WinState )
+        {
+            print ( "And now we're going home." );
+        }
+        else
+        {
+            print ( "You're all grown up." );
+            print ( "Player hits " + Player.Hits + ", you won = " + WinState );
+        }
+
 
         yield return textWait;
     }

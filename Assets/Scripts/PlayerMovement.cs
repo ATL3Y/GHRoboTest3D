@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private float jumpForce = 290.0f;
     private Quaternion oQuat;
+    private float speed = 3.0f;
 
 
     // Use this for initialization
@@ -22,17 +23,15 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     private void Update ( )
     {
-        float move = Input.GetAxis("Vertical");
+        // Update animation.
+        float move = Mathf.Clamp01( Input.GetAxis("Vertical") );
         anim.SetFloat ( "Speed", move );
 
         float turnSpeed = Input.GetAxis("Horizontal");
         // anim.SetFloat ( "TurnSpeed", turnSpeed );
 
-
-
         // Limit jump to a state.  HACKL3Y: This isn't working.
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-
         if ( Input.GetKeyDown ( KeyCode.Space ) && stateInfo.fullPathHash != jumpHash )
         {
             // Frame left ground / fps / anim speed. HACKL3Y: derive this float. 
@@ -43,11 +42,17 @@ public class PlayerMovement : MonoBehaviour
 
         // HACKL3Y: Add raycast ground and transition from jump to root anim.
 
+        // Update rotation and translation.
+
         // Rotate player about Y axis.  Right = 90 degrees.  Left = 270 degrees. 
         float degrees = 90.0f * -turnSpeed + 90.0f;
-        print ( degrees );
         Quaternion nQuat = Quaternion.AngleAxis ( degrees, Vector3.up );
         transform.rotation = oQuat * nQuat;
+
+        Vector3 dir = Vector3.Dot(Vector3.right, transform.forward) * Vector3.right;
+        dir.Normalize ( );
+        Vector3 offset = speed * move * Time.deltaTime * dir;
+        transform.position += offset;
         
 
     }

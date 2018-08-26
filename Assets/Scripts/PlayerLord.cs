@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class PlayerLord : MonoBehaviour
 {
-    private bool lostRound;
-    public bool LostRound { get { return lostRound; } }
+    public bool LostRound { get; set; }
 
     private int hits = 0;
     public int Hits { get { return hits; } }
 
     public void Init ( )
     {
-        lostRound = false;
+        LostRound = false;
     }
 
     public void DisablePlayer ( )
@@ -22,7 +21,7 @@ public class PlayerLord : MonoBehaviour
 
     public void EnablePlayer ( )
     {
-        lostRound = false;
+        LostRound = false;
     }
 
     public void Reset ( )
@@ -32,13 +31,22 @@ public class PlayerLord : MonoBehaviour
 
     private void OnCollisionEnter ( Collision collision )
     {
+
+        if ( collision.gameObject.layer == 8 )
+        {
+            LostRound = true;
+        }
+
+
         if ( collision.gameObject.GetComponent<Opponent> ( ) != null )
         {
             hits++;
 
             if ( hits > GameLord.Instance.Hits2WinRound - 1 )
             {
-                lostRound = true;
+                LostRound = true;
+
+                
                 if ( Time.timeSinceLevelLoad < GameLord.Instance.PlayTime2WinGame )
                 {
                     GameLord.Instance.WinState = true;
@@ -49,10 +57,8 @@ public class PlayerLord : MonoBehaviour
 
             if ( GameLord.Instance.Ddebug )
             {
-                Debug.Log ( "Hits: " + hits + ", Win State: " + GameLord.Instance.WinState );
+                Debug.Log ( "Growth level: " + hits );
             }
         }
-
-
     }
 }
