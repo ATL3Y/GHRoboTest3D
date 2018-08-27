@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnBeat ( )
     {
         // HACKL3Y: Add punch to layer mask or disable punch during translation. 
-        anim.SetTrigger ( punchHash );
+        // anim.SetTrigger ( punchHash );
     }
 
     public bool AmPunching ( )

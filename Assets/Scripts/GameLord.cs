@@ -36,6 +36,9 @@ public class GameLord : MonoBehaviour
     private float timer;
     private float timerDur = 60.0f / 20.0f;
 
+    [SerializeField]
+    private bool test = false;
+
     // Use this for initialization
     private void Start ( )
     {
@@ -49,6 +52,7 @@ public class GameLord : MonoBehaviour
 
         InitPlayer ( );
         InitOpponentLord ( );
+        
         InitCam ( );
 
         // Start Game.
@@ -74,8 +78,8 @@ public class GameLord : MonoBehaviour
         cam = Camera.main;
 
         // Set pos relative to player. 
-        cam.transform.position = player.transform.position - 20.0f * Vector3.forward;
-        cam.transform.rotation *= Quaternion.LookRotation ( player.transform.position - cam.transform.position );
+        cam.transform.position = player.transform.position - 15.0f * Vector3.forward + 5.0f * Vector3.up;
+        // cam.transform.rotation *= Quaternion.LookRotation ( player.transform.position - cam.transform.position );
     }
 
     private void InitOpponentLord ( )
@@ -152,6 +156,11 @@ public class GameLord : MonoBehaviour
 
         opponentLord.Reset ( );
         opponentLord.DisableOpponents ( );
+
+        if ( test )
+        {
+            opponentLord.gameObject.SetActive ( false );
+        }
 
         print ( "It's your birthday. Let's play." );
         GameState = GameStates.Playing;

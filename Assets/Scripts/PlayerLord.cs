@@ -7,7 +7,7 @@ public class PlayerLord : MonoBehaviour
     private int hits = 0;
     public int Hits { get { return hits; } }
     private PlayerMovement playerMovement;
-    public PlayerMovement PlayerMovement { get{return PlayerMovement;}}
+    public PlayerMovement PlayerMovement { get { return playerMovement; } }
 
     private bool playMode;
 
