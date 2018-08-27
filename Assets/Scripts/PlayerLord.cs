@@ -4,60 +4,92 @@ using UnityEngine;
 
 public class PlayerLord : MonoBehaviour
 {
-    public bool LostRound { get; set; }
-
     private int hits = 0;
     public int Hits { get { return hits; } }
+    private PlayerMovement playerMovement;
+    public PlayerMovement PlayerMovement { get{return PlayerMovement;}}
+
+    private bool playMode;
 
     public void Init ( )
     {
-        LostRound = false;
+        playMode = false;
+
+        if ( GetComponent<PlayerMovement> ( ) != null )
+        {
+            playerMovement = GetComponent<PlayerMovement> ( );
+        }
+        else
+        {
+            Debug.LogError ( "PlayerMovement component not found." );
+        }
+
+
+        playerMovement.Init ( );
     }
+
+    public void OnBeat ( )
+    {
+        if ( playMode )
+        {
+            playerMovement.OnBeat ( );
+        }
+
+    }
+
 
     public void DisablePlayer ( )
     {
-
+        playMode = false;
     }
 
     public void EnablePlayer ( )
     {
-        LostRound = false;
+        playMode = true;
     }
 
     public void Reset ( )
     {
+        transform.position = GameLord.Instance.PlayerSpawnPoint.position;
+        transform.rotation = GameLord.Instance.PlayerSpawnPoint.rotation;
+    }
+
+    public void UpdatePlayerLord ( )
+    {
+        playerMovement.UpdatePlayerMovement ( );
 
     }
 
     private void OnCollisionEnter ( Collision collision )
     {
-
+        // If I hit a limit, I lose.
         if ( collision.gameObject.layer == 8 )
         {
-            LostRound = true;
+            GameLord.Instance.GameState = GameLord.GameStates.Lost;
         }
 
 
         if ( collision.gameObject.GetComponent<Opponent> ( ) != null )
         {
-            hits++;
-
-            if ( hits > GameLord.Instance.Hits2WinRound - 1 )
+            // If I punch an opponent, I lose a growth point. 
+            if ( playerMovement.AmPunching ( ) )
             {
-                LostRound = true;
-
-                
-                if ( Time.timeSinceLevelLoad < GameLord.Instance.PlayTime2WinGame )
-                {
-                    GameLord.Instance.WinState = true;
-                }
+                hits--;
             }
-
-
+            // If I get hit by an opponent, I gain a growth point.
+            else
+            {
+                hits++;
+            }
 
             if ( GameLord.Instance.Ddebug )
             {
-                Debug.Log ( "Growth level: " + hits );
+                Debug.Log ( "Hits: " + hits );
+            }
+
+            if ( hits < 0 )
+            {
+                GameLord.Instance.GameState = GameLord.GameStates.Lost;
             }
         }
     }

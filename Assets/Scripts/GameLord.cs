@@ -20,42 +20,32 @@ public class GameLord : MonoBehaviour
 
     [SerializeField]
     private Transform playerSpawnPoint;
-
-    [SerializeField]
-    private Transform opponentSpawnPoint;
+    public Transform PlayerSpawnPoint { get { return playerSpawnPoint; } }
 
     private Camera cam;
     public Camera Camera { get { return cam; } }
 
     private int opponentCount;
     private float textWait;
-    private int roundNum;
 
-
-    public bool WinState { get; set; }
+    public enum GameStates { Default, Playing, Lost, Won };
+    public GameStates GameState;
 
     public bool Ddebug { get; set; }
-    private int round;
 
-    private int hits2WinRound;
-    public int Hits2WinRound { get { return hits2WinRound; } }
-
-    private float playTime2WinGame;
-    public float PlayTime2WinGame { get { return playTime2WinGame; } }
+    private float timer;
+    private float timerDur = 60.0f / 20.0f;
 
     // Use this for initialization
     private void Start ( )
     {
         instance = this;
-
         textWait = 1.0f;
         opponentCount = 30;
-
-        WinState = false;
         Ddebug = true;
-        round = 0;
-        hits2WinRound = 3;
-        playTime2WinGame = 20.0f;
+
+        timer = timerDur;
+        GameState = GameStates.Default;
 
         InitPlayer ( );
         InitOpponentLord ( );
@@ -71,6 +61,7 @@ public class GameLord : MonoBehaviour
         if ( temp.GetComponent<PlayerLord> ( ) != null )
         {
             player = temp.GetComponent<PlayerLord> ( );
+            player.Init ( );
         }
         else
         {
@@ -91,91 +82,110 @@ public class GameLord : MonoBehaviour
     {
         opponentLord = new GameObject ( ).AddComponent<OpponentLord> ( );
         opponentLord.gameObject.name = "OpponentLord";
-        opponentLord.Init ( opponentCount, opponentPrefab, opponentSpawnPoint );
+        opponentLord.Init ( opponentCount, opponentPrefab );
         opponentLord.DisableOpponents ( );
     }
+
+    private void OnBeat ( )
+    {
+        if ( Ddebug )
+        {
+            Debug.Log ( "OnBeat called." );
+        }
+        player.OnBeat ( );
+        opponentLord.OnBeat ( );
+    }
+
 
     // Update is called once per frame
     private void Update ( )
     {
+        if ( GameState != GameStates.Playing )
+        {
+            return;
+        }
 
+        timer -= Time.deltaTime;
+        if(timer < 0.0f )
+        {
+            timer = timerDur;
+
+            OnBeat ( );
+        }
+
+        player.UpdatePlayerLord ( );
+        opponentLord.UpdateOpponentLord ( );
     }
 
     private IEnumerator GameLoop ( )
     {
-        yield return StartCoroutine ( RoundStarting ( ) );
+        timer = timerDur;
+        GameState = GameStates.Default;
 
-        yield return StartCoroutine ( RoundPlaying ( ) );
+        yield return StartCoroutine ( GameStarting ( ) );
 
-        yield return StartCoroutine ( RoundEnding ( ) );
+        yield return StartCoroutine ( GamePlaying ( ) );
+
+        yield return StartCoroutine ( GameEnding ( ) );
 
         StopAllCoroutines ( ); // HACKL3Y: Why isn't this stopping the ReleaseOpponent call?
 
-        if ( WinState )
+        if ( GameState == GameStates.Won )
         {
-            // Ending animation 
-
-
-            
+            // Restart the scene.
             SceneManager.LoadScene ( 0 );
-
-            // Fix Lighting
 
         }
         else
         {
-            // Accumulate points / growth? 
+            // Restart the game. 
             StartCoroutine ( GameLoop ( ) );
+            
         }
     }
 
-    private IEnumerator RoundStarting ( )
+    private IEnumerator GameStarting ( )
     {
+        
         player.Reset ( );
         player.DisablePlayer ( );
 
         opponentLord.Reset ( );
         opponentLord.DisableOpponents ( );
 
-        // set cam pos
-        roundNum++;
-
-        round++;
-        // display round num text
-        print ( "Starting round " + round );
+        print ( "It's your birthday. Let's play." );
+        GameState = GameStates.Playing;
 
         yield return textWait;
     }
 
-    private IEnumerator RoundPlaying ( )
+    private IEnumerator GamePlaying ( )
     {
         player.EnablePlayer ( );
         opponentLord.EnableOpponents ( );
 
-        // Make text empty
-
-        while ( !player.LostRound )
+        while ( GameState != GameStates.Lost )
         {
             yield return null;
         }
-
     }
 
-    private IEnumerator RoundEnding ( )
+    private IEnumerator GameEnding ( )
     {
-        player.DisablePlayer ( );
 
+        player.DisablePlayer ( );
         opponentLord.DisableOpponents ( );
 
         // Display round score
-        if ( !WinState )
+        if ( GameState == GameStates.Won )
         {
-            print ( "And now we're going home." );
+            // PLAY ENDING ANIMATION.
+            // Fade out.
+            print ( "You're all grown up." );
         }
         else
         {
-            print ( "You're all grown up." );
-            print ( "Player hits " + Player.Hits + ", you won = " + WinState );
+            print ( "And now we're going home." );
         }
 
 

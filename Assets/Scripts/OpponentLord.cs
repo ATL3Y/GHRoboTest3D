@@ -6,19 +6,17 @@ public class OpponentLord : MonoBehaviour
 {
 
     private Opponent[] opponents;
-    private Transform spawnPoint;
 
     private int index;
 
-    public void Init ( int count, GameObject prefab, Transform trans )
+    public void Init ( int count, GameObject prefab )
     {
         opponents = new Opponent [ count ];
-        spawnPoint = trans;
         index = 0;
 
         for ( int i = 0; i < count; i++ )
         {
-            GameObject temp = Instantiate (prefab, spawnPoint.position, spawnPoint.rotation);
+            GameObject temp = Instantiate (prefab, Vector3.zero, Quaternion.identity);
 
             if ( temp.GetComponent<Opponent> ( ) != null )
             {
@@ -26,6 +24,8 @@ public class OpponentLord : MonoBehaviour
                 opponents [ i ] = temp.GetComponent<Opponent> ( );
                 opponents [ i ].transform.SetParent ( this.transform );
                 opponents [ i ].Index = i;
+                opponents [ i ].Dead = false;
+                opponents [ i ].Init ( );
             }
             else
             {
@@ -34,21 +34,66 @@ public class OpponentLord : MonoBehaviour
         }
     }
 
+    public void OnBeat ( )
+    { 
+    
+        if ( GameLord.Instance.Ddebug )
+        {
+            Debug.Log ( "OpponentLord.OnBeat called." );
+        }
+
+        ReleaseOpponent ( );
+        for ( int i = 0; i < opponents.Length; i++ )
+        {
+            opponents [ i ].OnBeat ( );
+        }
+    }
+
     public void ReleaseOpponent ( )
     {
+        if ( GameLord.Instance.Ddebug )
+        {
+            Debug.Log ( "ReleaseOpponent called." );
+        }
+
+        if ( GameLord.Instance.GameState != GameLord.GameStates.Playing )
+        {
+            if ( GameLord.Instance.Ddebug )
+            {
+                Debug.LogWarning ( "Trying to release in not playing." );
+            }
+            
+            return;
+        }
+
         index++;
         if ( index > opponents.Length - 1 )
         {
             index = 0;
         }
+
         if ( opponents [ index ] != null )
         {
-            opponents [ index ].gameObject.SetActive ( true );
-
-            if ( releaseMode )
+            if ( !opponents [ index ].Dead )
             {
-                CoHelp.Instance.DoWhen ( 3.0f, delegate { ReleaseOpponent ( ); } );
+                if ( GameLord.Instance.Ddebug )
+                {
+                    Debug.Log ( "Releasing opponent." );
+                }
+
+                opponents [ index ].gameObject.SetActive ( true );
+                opponents [ index ].transform.position = new Vector3 ( -10.0f, 6.0f * GameLord.Instance.Player.transform.localScale.y, 0.0f );
+                opponents [ index ].transform.rotation *= Quaternion.LookRotation ( GameLord.Instance.Player.transform.position - opponents [ index ].transform.position );
+                opponents [ index ].EnableOpponent ( );
             }
+            else
+            {
+                if ( GameLord.Instance.Ddebug )
+                {
+                    Debug.Log ( "Trying to release but opponent is dead." );
+                }
+            }
+
         }
         else
         {
@@ -62,35 +107,43 @@ public class OpponentLord : MonoBehaviour
 
     }
 
-    public void ResetOpponent ( int index )
+    public void UpdateOpponentLord ( )
     {
-        opponents [ index ].transform.localPosition = spawnPoint.position;
-        opponents [ index ].transform.localRotation = spawnPoint.rotation;
-        opponents [ index ].gameObject.SetActive ( false );
+        
+        for ( int i = 0; i < opponents.Length; i++ )
+        {
+            if ( opponents [ i ].gameObject.activeInHierarchy )
+            {
+                opponents [ i ].UpdateOpponent ( );
+            }
+            
+        }
     }
 
-    private bool releaseMode = false;
+    public void ResetOpponent ( int index )
+    {
+        opponents [ index ].gameObject.SetActive ( false );
+        opponents [ index ].transform.position = Vector3.zero;
+        opponents [ index ].transform.rotation = Quaternion.identity;
+    }
+
     public void DisableOpponents ( )
     {
-        releaseMode = false;
         for ( int i = 0; i < opponents.Length; i++ )
         {
             opponents [ i ].gameObject.SetActive ( false );
+            opponents [ index ].transform.position = Vector3.zero;
+            opponents [ index ].transform.rotation = Quaternion.identity;
         }
     }
 
     public void EnableOpponents ( )
     {
-        releaseMode = true;
-        CoHelp.Instance.DoWhen ( 2.0f, delegate { ReleaseOpponent ( ); } );
+        // CoHelp.Instance.DoWhen ( 2.0f, delegate { ReleaseOpponent ( ); } );
     }
 
     public void Reset ( )
     {
-        for ( int i = 0; i < opponents.Length; i++ )
-        {
-            opponents [ i ].transform.localPosition = spawnPoint.position;
-            opponents [ i ].transform.localRotation = spawnPoint.rotation;
-        }
+
     }
 }
