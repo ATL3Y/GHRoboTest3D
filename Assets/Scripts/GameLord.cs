@@ -19,11 +19,12 @@ public class GameLord : MonoBehaviour
     public OpponentLord OpponentLord { get { return opponentLord; } }
 
     [SerializeField]
-    private Transform playerSpawnPoint;
-    public Transform PlayerSpawnPoint { get { return playerSpawnPoint; } }
-
+    private GameObject camPrefab;
     private Camera cam;
-    public Camera Camera { get { return cam; } }
+    public Camera Cam { get { return cam; } }
+
+    [SerializeField]
+    private GameObject environmentPrefab;
 
     private int opponentCount;
     private float textWait;
@@ -52,8 +53,8 @@ public class GameLord : MonoBehaviour
 
         InitPlayer ( );
         InitOpponentLord ( );
-        
         InitCam ( );
+        Instantiate ( environmentPrefab, Vector3.zero, Quaternion.identity );
 
         // Start Game.
         StartCoroutine ( GameLoop ( ) );
@@ -61,7 +62,7 @@ public class GameLord : MonoBehaviour
 
     private void InitPlayer ( )
     {
-        GameObject temp = Instantiate ( playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation );
+        GameObject temp = Instantiate ( playerPrefab, Vector3.zero, Quaternion.LookRotation ( Vector3.right ) );
         if ( temp.GetComponent<PlayerLord> ( ) != null )
         {
             player = temp.GetComponent<PlayerLord> ( );
@@ -75,11 +76,18 @@ public class GameLord : MonoBehaviour
 
     private void InitCam ( )
     {
-        cam = Camera.main;
+        Vector3 pos = player.transform.position - 15.0f * Vector3.forward + 5.0f * Vector3.up;
+        GameObject temp = Instantiate ( camPrefab, pos, Quaternion.LookRotation(Vector3.forward) );
+        if ( temp.GetComponent<Camera> ( ) != null )
+        {
+            cam = temp.GetComponent<Camera> ( );
+            
+        }
+        else
+        {
+            Debug.LogError ( "Camera component not found." );
+        }
 
-        // Set pos relative to player. 
-        cam.transform.position = player.transform.position - 15.0f * Vector3.forward + 5.0f * Vector3.up;
-        // cam.transform.rotation *= Quaternion.LookRotation ( player.transform.position - cam.transform.position );
     }
 
     private void InitOpponentLord ( )
@@ -110,7 +118,7 @@ public class GameLord : MonoBehaviour
         }
 
         timer -= Time.deltaTime;
-        if(timer < 0.0f )
+        if ( timer < 0.0f )
         {
             timer = timerDur;
 
@@ -144,13 +152,13 @@ public class GameLord : MonoBehaviour
         {
             // Restart the game. 
             StartCoroutine ( GameLoop ( ) );
-            
+
         }
     }
 
     private IEnumerator GameStarting ( )
     {
-        
+
         player.Reset ( );
         player.DisablePlayer ( );
 

@@ -50,8 +50,8 @@ public class PlayerLord : MonoBehaviour
 
     public void Reset ( )
     {
-        transform.position = GameLord.Instance.PlayerSpawnPoint.position;
-        transform.rotation = GameLord.Instance.PlayerSpawnPoint.rotation;
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.LookRotation ( Vector3.right );
     }
 
     public void UpdatePlayerLord ( )
