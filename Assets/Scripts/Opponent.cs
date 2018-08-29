@@ -11,6 +11,7 @@ public class Opponent : MonoBehaviour
     private Renderer rend;
     private Rigidbody rb;
     public bool Dead { get; set; }
+    private Color ogColor;
 
     public void OnBeat ( )
     {
@@ -23,6 +24,7 @@ public class Opponent : MonoBehaviour
         {
 
             rend = GetComponent<Renderer> ( );
+            ogColor = rend.material.color;
         }
         else
         {
@@ -38,6 +40,8 @@ public class Opponent : MonoBehaviour
         {
             Debug.LogError ( "Rigidbody component missing." );
         }
+
+
     }
 
     public void UpdateOpponent ( )
@@ -45,61 +49,51 @@ public class Opponent : MonoBehaviour
         timer -= Time.deltaTime;
         if ( timer > 0.0f )
         {
-            rend.material.color = Color.yellow;
+            rend.material.color = new Color ( Random.Range ( .5f, 2.0f ), Random.Range ( .5f, 2.0f ), Random.Range ( .5f, 2.0f ) );
         }
         else
         {
-            rend.material.color = Color.white;
+            rend.material.color = ogColor;
         }
 
-        //transform.localPosition -= speed * Time.deltaTime * Vector3.right;
-        // rb.AddForce ( speed * Time.deltaTime * transform.forward, ForceMode.Force );
 
-        // Derive left limit from Gamelord.
         if ( transform.position.y < -10.0f )
         {
             if ( GameLord.Instance.Ddebug )
             {
-                Debug.Log ( "Resetting opponent " + Index + " due to bounds." );
+                Debug.Log ( "Resetting opponent " + Index + " due to ground bound." );
             }
             GameLord.Instance.OpponentLord.ResetOpponent ( Index );
         }
     }
 
-    public void EnableOpponent ( Vector3 hitDir )
+    public void EnableOpponent ( Vector3 hitDir, float hitMag )
     {
-        // rb.AddForce ( speed * transform.forward, ForceMode.Impulse );
-        rb.AddForce ( hitDir, ForceMode.Impulse );
+        AddForce ( hitDir, hitMag );
+    }
+
+    private void AddForce(Vector3 hitDir, float hitMag )
+    {
+        hitMag *= 10.0f;
+        hitDir += Vector3.up;
+
+        // Flatten movement so opponents always hit the walls. 
+        hitDir = new Vector3 ( hitDir.x, hitDir.y, 0.0f );
+
+        hitDir.Normalize ( );
+        rb.AddForce ( hitDir * hitMag, ForceMode.Impulse );
     }
 
     private void OnCollisionEnter ( Collision collision )
     {
-        Vector3 hitDir = transform.position - collision.gameObject.transform.position;
-        rb.AddForce ( hitDir, ForceMode.Impulse );
-
-        return;
-        if ( collision.gameObject.GetComponent<PlayerLord> ( ) != null )
+        // If I hit a wall, bounce and reset.
+        if ( collision.gameObject.layer == 8 )
         {
-            if ( GameLord.Instance.Player.PlayerMovement.AmPunching ( ) )
-            {
-                // Bad anim
-                Dead = true;
-                if ( GameLord.Instance.Ddebug )
-                {
-                    Debug.Log ( "opponent " + Index + " is dead." );
-                }
-                CoHelp.Instance.DoWhen ( 3.0f, delegate { GameLord.Instance.OpponentLord.ResetOpponent ( Index ); } );
-            }
-            else
-            {
-                // Yay anim
-                GameLord.Instance.OpponentLord.ResetOpponent ( Index );
-                if ( GameLord.Instance.Ddebug )
-                {
-                    Debug.Log ( "opponent " + Index + " is reset." );
-                }
-            }
+            print ( "hit wall" );
+            Vector3 hitDir = transform.position - collision.gameObject.transform.position;
 
+            AddForce ( hitDir, 1.0f );
+            CoHelp.Instance.DoWhen ( 3.0f, delegate { GameLord.Instance.OpponentLord.ResetOpponent ( Index ); } );
         }
 
     }

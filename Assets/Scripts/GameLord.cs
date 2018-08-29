@@ -29,9 +29,6 @@ public class GameLord : MonoBehaviour
     [SerializeField]
     private GameObject environmentPrefab;
 
-    //[SerializeField]
-    //Joint joint;
-
     private int opponentCount;
     private float textWait;
 
@@ -46,13 +43,12 @@ public class GameLord : MonoBehaviour
     [SerializeField]
     private bool test = false;
 
-    // Use this for initialization
     private void Start ( )
     {
         instance = this;
-        textWait = 1.0f;
+        textWait = 6.0f;
         opponentCount = 30;
-        Ddebug = true;
+        Ddebug = false;
 
         timer = timerDur;
         GameState = GameStates.Default;
@@ -68,7 +64,7 @@ public class GameLord : MonoBehaviour
 
     private void InitPlayer ( )
     {
-        GameObject temp = Instantiate ( playerPrefab, Vector3.zero, Quaternion.LookRotation ( Vector3.right ) );
+        GameObject temp = Instantiate ( playerPrefab, new Vector3(-2.5f, 0.0f, 0.0f), Quaternion.LookRotation ( Vector3.right ) );
         if ( temp.GetComponent<PlayerLord> ( ) != null )
         {
             player = temp.GetComponent<PlayerLord> ( );
@@ -98,16 +94,10 @@ public class GameLord : MonoBehaviour
 
     private void InitOpponentLord ( )
     {
-        // opponentLord = new GameObject ( ).AddComponent<OpponentLord> ( );
-        // opponentLord.gameObject.name = "OpponentLord";
-
         GameObject temp = Instantiate ( opponentLordPrefab );
-        OpponentLord tempOp = temp.transform.GetComponentInChildren<OpponentLord>();
-        if ( tempOp != null) // temp.GetComponent<OpponentLord> ( ) != null )
+        if ( temp.GetComponentInChildren<OpponentLord> ( ) != null)
         {
-            // opponentLord = temp.GetComponent<OpponentLord> ( );
-            opponentLord = tempOp;
-            //opponentLord.transform.SetParent ( joint.transform );
+            opponentLord = temp.GetComponentInChildren<OpponentLord> ( );
             opponentLord.Init ( opponentCount, opponentPrefab );
             opponentLord.DisableOpponents ( );
         }
@@ -130,7 +120,6 @@ public class GameLord : MonoBehaviour
     }
 
 
-    // Update is called once per frame
     private void Update ( )
     {
         if ( GameState != GameStates.Playing )
@@ -161,20 +150,7 @@ public class GameLord : MonoBehaviour
 
         yield return StartCoroutine ( GameEnding ( ) );
 
-        StopAllCoroutines ( ); // HACKL3Y: Why isn't this stopping the ReleaseOpponent call?
-
-        if ( GameState == GameStates.Won )
-        {
-            // Restart the scene.
-            SceneManager.LoadScene ( 0 );
-
-        }
-        else
-        {
-            // Restart the game. 
-            StartCoroutine ( GameLoop ( ) );
-
-        }
+        StartCoroutine ( GameLoop ( ) );
     }
 
     private IEnumerator GameStarting ( )
@@ -191,7 +167,7 @@ public class GameLord : MonoBehaviour
             opponentLord.gameObject.SetActive ( false );
         }
 
-        print ( "It's your birthday. Let's play." );
+        print ( "It's your birthday! Hit the pinata." );
         GameState = GameStates.Playing;
 
         yield return textWait;
@@ -202,7 +178,7 @@ public class GameLord : MonoBehaviour
         player.EnablePlayer ( );
         opponentLord.EnableOpponents ( );
 
-        while ( GameState != GameStates.Lost )
+        while ( GameState != GameStates.Won && GameState != GameStates.Lost )
         {
             yield return null;
         }
@@ -213,19 +189,20 @@ public class GameLord : MonoBehaviour
 
         player.DisablePlayer ( );
         opponentLord.DisableOpponents ( );
-
-        // Display round score
+        Debug.Log ( "game ending" );
         if ( GameState == GameStates.Won )
         {
-            // PLAY ENDING ANIMATION.
-            // Fade out.
-            print ( "You're all grown up." );
+
+            print ( "Yaaaaay you're all grown up!" );
         }
         else
         {
-            print ( "And now we're going home." );
+            print ( "Hey don't leave the party!" );
         }
 
+        player.Reset ( );
+        opponentLord.Reset ( );
+        // Make the spring still. 
 
         yield return textWait;
     }

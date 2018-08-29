@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerLord : MonoBehaviour
 {
-    private int hits = 0;
-    public int Hits { get { return hits; } }
+
     private PlayerMovement playerMovement;
     public PlayerMovement PlayerMovement { get { return playerMovement; } }
 
@@ -50,7 +49,7 @@ public class PlayerLord : MonoBehaviour
 
     public void Reset ( )
     {
-        transform.position = Vector3.zero;
+        transform.position = new Vector3 ( -2.5f, 0.0f, 0.0f );
         transform.rotation = Quaternion.LookRotation ( Vector3.right );
     }
 
@@ -60,37 +59,17 @@ public class PlayerLord : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter ( Collision collision )
+    private void OnTriggerEnter ( Collider other )
     {
         // If I hit a limit, I lose.
-        if ( collision.gameObject.layer == 8 )
+        if ( other.gameObject.layer == 8 )
         {
             GameLord.Instance.GameState = GameLord.GameStates.Lost;
         }
+    }
 
+    private void OnCollisionEnter ( Collision collision )
+    {
 
-        if ( collision.gameObject.GetComponent<Opponent> ( ) != null )
-        {
-            // If I punch an opponent, I lose a growth point. 
-            if ( playerMovement.AmPunching ( ) )
-            {
-                hits--;
-            }
-            // If I get hit by an opponent, I gain a growth point.
-            else
-            {
-                hits++;
-            }
-
-            if ( GameLord.Instance.Ddebug )
-            {
-                Debug.Log ( "Hits: " + hits );
-            }
-
-            if ( hits < 0 )
-            {
-                GameLord.Instance.GameState = GameLord.GameStates.Lost;
-            }
-        }
     }
 }

@@ -90,7 +90,8 @@ public class PlayerMovement : MonoBehaviour
         if ( AmPunching ( ) )
         {
             hitBox.SetActive ( true );
-        }else
+        }
+        else
         {
             hitBox.SetActive ( false );
         }

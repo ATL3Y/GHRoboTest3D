@@ -8,6 +8,9 @@ public class OpponentLord : MonoBehaviour
     private Opponent[] opponents;
 
     private int index;
+    private int hits = 0;
+    public int Hits { get { return hits; } }
+
 
     public void Init ( int count, GameObject prefab )
     {
@@ -25,6 +28,7 @@ public class OpponentLord : MonoBehaviour
                 opponents [ i ].transform.SetParent ( this.transform );
                 opponents [ i ].Index = i;
                 opponents [ i ].Dead = false;
+                opponents [ i ].GetComponent<Renderer> ( ).material.color = new Color ( Random.Range ( .5f, 2.0f ), Random.Range ( .5f, 2.0f ), Random.Range ( .5f, 2.0f ) );
                 opponents [ i ].Init ( );
             }
             else
@@ -35,21 +39,42 @@ public class OpponentLord : MonoBehaviour
     }
 
     public void OnBeat ( )
-    { 
-    
+    {
         if ( GameLord.Instance.Ddebug )
         {
             Debug.Log ( "OpponentLord.OnBeat called." );
         }
 
-        // ReleaseOpponent ( );
         for ( int i = 0; i < opponents.Length; i++ )
         {
             opponents [ i ].OnBeat ( );
         }
     }
 
-    public void ReleaseOpponent ( )
+    public void ReleaseAll ( )
+    {
+        foreach ( Opponent o in opponents )
+        {
+            if ( o != null )
+            {
+                if ( !o.Dead )
+                {
+                    print ( "in release all" );
+                    float hitMag = Random.Range(0.01f, 5.0f);
+                    Vector3 hitDir = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(-5.0f, 5.0f), 0.0f);
+                    o.gameObject.SetActive ( true );
+                    o.transform.localPosition = Vector3.zero;
+                    o.transform.rotation *= Quaternion.LookRotation ( hitDir );
+                    o.EnableOpponent ( hitDir, hitMag );
+                }
+            }
+            
+        }
+
+        
+    }
+
+    public void ReleaseOpponent ( Vector3 hitDir, float hitMag )
     {
         if ( GameLord.Instance.Ddebug )
         {
@@ -62,7 +87,7 @@ public class OpponentLord : MonoBehaviour
             {
                 Debug.LogWarning ( "Trying to release in not playing." );
             }
-            
+
             return;
         }
 
@@ -83,9 +108,8 @@ public class OpponentLord : MonoBehaviour
 
                 opponents [ index ].gameObject.SetActive ( true );
                 opponents [ index ].transform.localPosition = Vector3.zero;
-                // opponents [ index ].transform.position = new Vector3 ( -10.0f, 6.0f * GameLord.Instance.Player.transform.localScale.y, 0.0f );
-                opponents [ index ].transform.rotation *= Quaternion.LookRotation ( hitDir ); // GameLord.Instance.Player.transform.position - opponents [ index ].transform.position
-                opponents [ index ].EnableOpponent ( hitDir );
+                opponents [ index ].transform.rotation *= Quaternion.LookRotation ( hitDir );
+                opponents [ index ].EnableOpponent ( hitDir, hitMag );
             }
             else
             {
@@ -110,14 +134,14 @@ public class OpponentLord : MonoBehaviour
 
     public void UpdateOpponentLord ( )
     {
-        
+
         for ( int i = 0; i < opponents.Length; i++ )
         {
             if ( opponents [ i ].gameObject.activeInHierarchy )
             {
                 opponents [ i ].UpdateOpponent ( );
             }
-            
+
         }
     }
 
@@ -140,27 +164,47 @@ public class OpponentLord : MonoBehaviour
 
     public void EnableOpponents ( )
     {
-        // CoHelp.Instance.DoWhen ( 2.0f, delegate { ReleaseOpponent ( ); } );
+
     }
 
     public void Reset ( )
     {
-
+        hits = 0;
     }
-    private Vector3 hitDir;
+
     private void OnCollisionEnter ( Collision collision )
     {
-        
-        if ( collision.gameObject.GetComponent<PlayerLord> ( ) != null )
+
+        if ( collision.gameObject.layer == 12 )
         {
             if ( GameLord.Instance.Ddebug )
             {
-                Debug.Log ( "Hit by player." );
+                Debug.Log ( "Hit by hitbox." );
             }
 
-            hitDir = transform.position - collision.gameObject.transform.position;
-            
-            ReleaseOpponent ( );
+            Vector3 hitDir = transform.position - collision.gameObject.transform.position;
+            float hitMag = hitDir.magnitude;
+            hitDir.Normalize ( );
+
+            hits++;
+            if ( GameLord.Instance.Ddebug )
+            {
+                Debug.Log ( "Hits: " + hits );
+            }
+
+            if ( hits > 3 )
+            {
+                int emphasis = 3;
+                for ( int i = 0; i < emphasis; i++ )
+                {
+                    ReleaseAll ( );
+                }
+
+                CoHelp.Instance.DoWhen ( 3.0f, delegate { GameLord.Instance.GameState = GameLord.GameStates.Won; } );
+                return;
+            }
+
+            ReleaseOpponent ( hitDir, hitMag );
         }
 
     }
