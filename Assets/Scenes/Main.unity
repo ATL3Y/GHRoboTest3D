@@ -113,6 +113,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &366240616
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4549944628541764, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1623127189491062, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: e998612068536324cafaaba2d3af1b2a, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1019532854
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,15 +186,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cec43a3ef14fe3046b94814291133aec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 1115575816897102, guid: e998612068536324cafaaba2d3af1b2a,
+  playerPrefab: {fileID: 1623127189491062, guid: e998612068536324cafaaba2d3af1b2a,
     type: 2}
   opponentPrefab: {fileID: 1803307477532408, guid: 843694e71f0151d4187cd66d29068c6c,
     type: 2}
-  camPrefab: {fileID: 1491019504964404, guid: 7c68d36db30036645a2d017c55905261, type: 2}
+  opponentLordPrefab: {fileID: 1742893580965914, guid: 2b3ee7027f4f7ca4b81b4aa3cc6e1e41,
+    type: 2}
+  camPrefab: {fileID: 1253363345276370, guid: 7c68d36db30036645a2d017c55905261, type: 2}
   environmentPrefab: {fileID: 1424537050051636, guid: cd4931db5c50b0043af06ea4b595ab32,
     type: 2}
   GameState: 0
-  test: 1
+  test: 0
 --- !u!4 &1019532856
 Transform:
   m_ObjectHideFlags: 0

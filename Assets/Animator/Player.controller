@@ -60,7 +60,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Jump
     m_StateMachine: {fileID: 1107828316594209256}
-    m_Mask: {fileID: 31900000, guid: 2799d0982f2b07044a0ae720ce613e26, type: 2}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0

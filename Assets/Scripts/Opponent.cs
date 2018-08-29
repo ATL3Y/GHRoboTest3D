@@ -66,13 +66,18 @@ public class Opponent : MonoBehaviour
         }
     }
 
-    public void EnableOpponent ( )
+    public void EnableOpponent ( Vector3 hitDir )
     {
-        rb.AddForce ( speed * transform.forward, ForceMode.Impulse );
+        // rb.AddForce ( speed * transform.forward, ForceMode.Impulse );
+        rb.AddForce ( hitDir, ForceMode.Impulse );
     }
 
     private void OnCollisionEnter ( Collision collision )
     {
+        Vector3 hitDir = transform.position - collision.gameObject.transform.position;
+        rb.AddForce ( hitDir, ForceMode.Impulse );
+
+        return;
         if ( collision.gameObject.GetComponent<PlayerLord> ( ) != null )
         {
             if ( GameLord.Instance.Player.PlayerMovement.AmPunching ( ) )

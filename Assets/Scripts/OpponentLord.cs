@@ -42,7 +42,7 @@ public class OpponentLord : MonoBehaviour
             Debug.Log ( "OpponentLord.OnBeat called." );
         }
 
-        ReleaseOpponent ( );
+        // ReleaseOpponent ( );
         for ( int i = 0; i < opponents.Length; i++ )
         {
             opponents [ i ].OnBeat ( );
@@ -82,9 +82,10 @@ public class OpponentLord : MonoBehaviour
                 }
 
                 opponents [ index ].gameObject.SetActive ( true );
-                opponents [ index ].transform.position = new Vector3 ( -10.0f, 6.0f * GameLord.Instance.Player.transform.localScale.y, 0.0f );
-                opponents [ index ].transform.rotation *= Quaternion.LookRotation ( GameLord.Instance.Player.transform.position - opponents [ index ].transform.position );
-                opponents [ index ].EnableOpponent ( );
+                opponents [ index ].transform.localPosition = Vector3.zero;
+                // opponents [ index ].transform.position = new Vector3 ( -10.0f, 6.0f * GameLord.Instance.Player.transform.localScale.y, 0.0f );
+                opponents [ index ].transform.rotation *= Quaternion.LookRotation ( hitDir ); // GameLord.Instance.Player.transform.position - opponents [ index ].transform.position
+                opponents [ index ].EnableOpponent ( hitDir );
             }
             else
             {
@@ -144,6 +145,23 @@ public class OpponentLord : MonoBehaviour
 
     public void Reset ( )
     {
+
+    }
+    private Vector3 hitDir;
+    private void OnCollisionEnter ( Collision collision )
+    {
+        
+        if ( collision.gameObject.GetComponent<PlayerLord> ( ) != null )
+        {
+            if ( GameLord.Instance.Ddebug )
+            {
+                Debug.Log ( "Hit by player." );
+            }
+
+            hitDir = transform.position - collision.gameObject.transform.position;
+            
+            ReleaseOpponent ( );
+        }
 
     }
 }

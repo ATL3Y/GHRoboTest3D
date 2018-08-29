@@ -4,28 +4,42 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public float jumpForce = 36.0f;
+
+    public float hAccel = 20.0f;
+    public float maxHSpeed = 12.0f;
+    public float hDeccel = 20.0f;
+
     private Animator anim;
     private int jumpHash;
     private int jumpLayer;
     private int punchHash;
     private int punchLayer;
     private Rigidbody rb;
-    private float jumpForce = 360.0f;
+
     private Quaternion ogQuat;
     private float speed = 3.0f;
-    private float oMove;
+
+    private bool isOnGround;
+
+    private Vector3 velocity = Vector3.zero;
+
+    private float facing = 0.0f;
+    private float animatedFacing = 0.0f;
+
+    [SerializeField]
+    private GameObject hitBox;
 
     public void Init ( )
     {
         anim = GetComponent<Animator> ( );
         rb = GetComponent<Rigidbody> ( );
         ogQuat = transform.rotation;
-        oMove = 0.0f;
 
 
         jumpLayer = anim.GetLayerIndex ( "Jump" );
         jumpHash = Animator.StringToHash ( "Jump" );
-        
+
         if ( GameLord.Instance.Ddebug )
         {
             AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(jumpLayer);
@@ -35,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
         punchLayer = anim.GetLayerIndex ( "Punch" );
         punchHash = Animator.StringToHash ( "Punch" );
-        
+
         if ( GameLord.Instance.Ddebug )
         {
             AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo ( punchLayer );
@@ -46,14 +60,12 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnBeat ( )
     {
-        // HACKL3Y: Add punch to layer mask or disable punch during translation. 
-        anim.SetTrigger ( punchHash );
+
     }
 
     public bool AmPunching ( )
     {
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(punchLayer);
-
         if ( stateInfo.IsName ( "Punch.Punch" ) )
         // if ( stateInfo.shortNameHash == punchHash )
         {
@@ -71,58 +83,66 @@ public class PlayerMovement : MonoBehaviour
 
     public void UpdatePlayerMovement ( )
     {
-        bool p = AmPunching();
-        // Enable double jump with quick double click on spacebar before delay times out. 
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(jumpLayer);
-
-        if ( stateInfo.IsName ( "Jump.Jump" ) )
-        // if ( stateInfo.shortNameHash == jumpHash )
+        if ( Input.GetKeyDown ( KeyCode.C ) )
         {
-            if ( GameLord.Instance.Ddebug )
-            {
-                Debug.Log ( "In jump state" );
-            }
+            anim.SetTrigger ( punchHash );
         }
-        else
+        if ( AmPunching ( ) )
         {
-
+            hitBox.SetActive ( true );
+        }else
+        {
+            hitBox.SetActive ( false );
         }
 
-        if ( Input.GetKeyDown ( KeyCode.Space ) )
+        if ( Input.GetKeyDown ( KeyCode.X ) )
         {
-            // Frame left ground / fps / anim speed. HACKL3Y: derive this float. 
-            float delay = 10.0f / 24.0f / 0.5f;
-            CoHelp.Instance.DoWhen ( delay, delegate { Jump ( ); } );
+            velocity.y = jumpForce;
+            isOnGround = false;
             anim.SetTrigger ( jumpHash );
         }
+        // Simulate momentum.
+        float hInput = Input.GetAxisRaw("Horizontal");
 
-        // Update rotation.
-        float nMove = Input.GetAxis("Horizontal");
-        nMove = oMove + 45.0f * Time.deltaTime * ( nMove - oMove );
-        nMove = Mathf.Clamp ( nMove, -1.0f, 1.0f );
+        Vector3 accel = new Vector3(0.0f, 0.0f, 0.0f);
+        accel.x = hInput * hAccel;
+        accel.y = Physics.gravity.y;
+        velocity.x = Mathf.Lerp ( velocity.x, 0.0f, hDeccel * Time.deltaTime );
+        velocity += accel * Time.deltaTime;
+        velocity.x = Mathf.Clamp ( velocity.x, -maxHSpeed, maxHSpeed );
 
-        // Rotate player about Y axis.  Right = 90 degrees.  Left = 270 degrees. 
-        float degrees = 90.0f - 90.0f * nMove;
-        Quaternion nQuat = Quaternion.AngleAxis ( degrees, Vector3.up );
-        transform.rotation = ogQuat * nQuat;
+        if ( hInput > 0.0f )
+        {
+            facing = 1.0f;
+        }
+        else if ( hInput < 0.0f )
+        {
+            facing = -1.0f;
+        }
 
-        // Update Translation.
-        Vector3 movement = new Vector3( nMove, transform.position.y, 0.0f);
-        rb.velocity = movement * speed;
+        transform.position += velocity * Time.deltaTime;
 
         // Update animation.
-        float animSpeed = rb.velocity.magnitude;
+        float animSpeed = Mathf.Abs(velocity.x);
         anim.SetFloat ( "Speed", animSpeed );
 
         // HACKL3Y: Add raycast ground and transition from jump to root anim.
-        if ( transform.position.y < 0.0f )
+        if ( transform.position.y <= 0.0f )
         {
+            velocity.y = 0.0f;
+            isOnGround = true;
             transform.position = new Vector3 ( transform.position.x, 0.0f, transform.position.z );
         }
-    }
+        else
+        {
+            isOnGround = false;
+        }
 
-    private void Jump ( )
-    {
-        rb.AddForce ( Vector3.up * jumpForce );
+        // Rotate player about Y axis.  Right = 90 degrees.  Left = 270 degrees. 
+        animatedFacing = Mathf.MoveTowards ( animatedFacing, facing, Time.deltaTime * 10.0f );
+        float degrees = 90.0f - 90.0f * animatedFacing;
+        Quaternion nQuat = Quaternion.AngleAxis ( degrees, Vector3.up );
+        transform.rotation = ogQuat * nQuat;
+
     }
 }

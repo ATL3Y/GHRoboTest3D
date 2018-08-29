@@ -15,6 +15,9 @@ public class GameLord : MonoBehaviour
 
     [SerializeField]
     private GameObject opponentPrefab;
+
+    [SerializeField]
+    private GameObject opponentLordPrefab;
     private OpponentLord opponentLord;
     public OpponentLord OpponentLord { get { return opponentLord; } }
 
@@ -25,6 +28,9 @@ public class GameLord : MonoBehaviour
 
     [SerializeField]
     private GameObject environmentPrefab;
+
+    //[SerializeField]
+    //Joint joint;
 
     private int opponentCount;
     private float textWait;
@@ -92,10 +98,25 @@ public class GameLord : MonoBehaviour
 
     private void InitOpponentLord ( )
     {
-        opponentLord = new GameObject ( ).AddComponent<OpponentLord> ( );
-        opponentLord.gameObject.name = "OpponentLord";
-        opponentLord.Init ( opponentCount, opponentPrefab );
-        opponentLord.DisableOpponents ( );
+        // opponentLord = new GameObject ( ).AddComponent<OpponentLord> ( );
+        // opponentLord.gameObject.name = "OpponentLord";
+
+        GameObject temp = Instantiate ( opponentLordPrefab );
+        OpponentLord tempOp = temp.transform.GetComponentInChildren<OpponentLord>();
+        if ( tempOp != null) // temp.GetComponent<OpponentLord> ( ) != null )
+        {
+            // opponentLord = temp.GetComponent<OpponentLord> ( );
+            opponentLord = tempOp;
+            //opponentLord.transform.SetParent ( joint.transform );
+            opponentLord.Init ( opponentCount, opponentPrefab );
+            opponentLord.DisableOpponents ( );
+        }
+        else
+        {
+            Debug.LogError ( "OpponentLord component not found." );
+        }
+        
+        
     }
 
     private void OnBeat ( )
