@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Temp
-  m_Shader: {fileID: 4800000, guid: a7acb8ee72e68cd40b9a45a5ac133261, type: 3}
+  m_Name: Player_AlphaOut
+  m_Shader: {fileID: 4800000, guid: f52c72426525c7e43aadfcb710ff579f, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0

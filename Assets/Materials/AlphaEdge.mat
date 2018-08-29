@@ -63,7 +63,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeSize: 0.00289
+    - _EdgeSize: 0.00332
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 0
@@ -79,6 +79,6 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EdgeColor: {r: 0.07586192, g: 0, b: 1, a: 1}
+    - _EdgeColor: {r: 0, g: 0.91724133, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
