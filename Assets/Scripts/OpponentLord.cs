@@ -59,7 +59,6 @@ public class OpponentLord : MonoBehaviour
             {
                 if ( !o.Dead )
                 {
-                    print ( "in release all" );
                     float hitMag = Random.Range(0.01f, 5.0f);
                     Vector3 hitDir = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(-5.0f, 5.0f), 0.0f);
                     o.gameObject.SetActive ( true );

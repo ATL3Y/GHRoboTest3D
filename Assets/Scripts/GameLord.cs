@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameLord : MonoBehaviour
 {
     private static GameLord instance;
     public static GameLord Instance { get { return instance; } }
+
+    [SerializeField]
+    private Text text;
 
     [SerializeField]
     private GameObject playerPrefab;
@@ -53,13 +57,17 @@ public class GameLord : MonoBehaviour
         timer = timerDur;
         GameState = GameStates.Default;
 
+        text.text = "PINATA BIRTHDAY GIRL!";
+
         InitPlayer ( );
         InitOpponentLord ( );
         InitCam ( );
         Instantiate ( environmentPrefab, Vector3.zero, Quaternion.identity );
 
-        // Start Game.
-        StartCoroutine ( GameLoop ( ) );
+        // Start game in a few seconds.
+        CoHelp.Instance.DoWhen ( textWait / 2.0f, delegate { StartCoroutine ( GameLoop ( ) ); } );
+
+
     }
 
     private void InitPlayer ( )
@@ -78,12 +86,12 @@ public class GameLord : MonoBehaviour
 
     private void InitCam ( )
     {
-        Vector3 pos = player.transform.position - 15.0f * Vector3.forward + 5.0f * Vector3.up;
+        Vector3 pos = -15.0f * Vector3.forward + 5.0f * Vector3.up;
         GameObject temp = Instantiate ( camPrefab, pos, Quaternion.LookRotation(Vector3.forward) );
         if ( temp.GetComponent<Camera> ( ) != null )
         {
             cam = temp.GetComponent<Camera> ( );
-            
+
         }
         else
         {
@@ -95,7 +103,7 @@ public class GameLord : MonoBehaviour
     private void InitOpponentLord ( )
     {
         GameObject temp = Instantiate ( opponentLordPrefab );
-        if ( temp.GetComponentInChildren<OpponentLord> ( ) != null)
+        if ( temp.GetComponentInChildren<OpponentLord> ( ) != null )
         {
             opponentLord = temp.GetComponentInChildren<OpponentLord> ( );
             opponentLord.Init ( opponentCount, opponentPrefab );
@@ -105,8 +113,8 @@ public class GameLord : MonoBehaviour
         {
             Debug.LogError ( "OpponentLord component not found." );
         }
-        
-        
+
+
     }
 
     private void OnBeat ( )
@@ -150,7 +158,18 @@ public class GameLord : MonoBehaviour
 
         yield return StartCoroutine ( GameEnding ( ) );
 
-        StartCoroutine ( GameLoop ( ) );
+        if ( GameState == GameStates.Won )
+        {
+            // Restart game in a few seconds. 
+            CoHelp.Instance.DoWhen ( textWait / 2.0f, delegate { SceneManager.LoadScene ( 0 ); } );
+        }
+        else
+        {
+            // Restart game loop in a few seconds. 
+            CoHelp.Instance.DoWhen ( textWait / 2.0f, delegate { StartCoroutine ( GameLoop ( ) ); } );
+
+        }
+
     }
 
     private IEnumerator GameStarting ( )
@@ -166,19 +185,20 @@ public class GameLord : MonoBehaviour
         {
             opponentLord.gameObject.SetActive ( false );
         }
-
-        print ( "It's your birthday! Hit the pinata." );
-        GameState = GameStates.Playing;
+        text.text = "It's your birthday! Hit the pinata.";
 
         yield return textWait;
     }
 
     private IEnumerator GamePlaying ( )
     {
+        GameState = GameStates.Playing;
         player.EnablePlayer ( );
         opponentLord.EnableOpponents ( );
 
-        while ( GameState != GameStates.Won && GameState != GameStates.Lost )
+        text.text = string.Empty;
+
+        while ( GameState == GameStates.Playing )
         {
             yield return null;
         }
@@ -186,24 +206,19 @@ public class GameLord : MonoBehaviour
 
     private IEnumerator GameEnding ( )
     {
-
         player.DisablePlayer ( );
         opponentLord.DisableOpponents ( );
-        Debug.Log ( "game ending" );
+
         if ( GameState == GameStates.Won )
         {
-
-            print ( "Yaaaaay you're all grown up!" );
+            text.text = "Yaaaaay you're all grown up!";
         }
         else
         {
-            print ( "Hey don't leave the party!" );
+            text.text = "Hey don't leave your own party!  Stick around!!!";
         }
 
-        player.Reset ( );
-        opponentLord.Reset ( );
         // Make the spring still. 
-
         yield return textWait;
     }
 }

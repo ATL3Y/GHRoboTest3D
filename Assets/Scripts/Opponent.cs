@@ -89,7 +89,6 @@ public class Opponent : MonoBehaviour
         // If I hit a wall, bounce and reset.
         if ( collision.gameObject.layer == 8 )
         {
-            print ( "hit wall" );
             Vector3 hitDir = transform.position - collision.gameObject.transform.position;
 
             AddForce ( hitDir, 1.0f );
